@@ -1,23 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, StyleSheet, View, Text} from 'react-native';
-import {useDispatch} from 'react-redux';
+import {Alert, StyleSheet} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {setLogOut} from '../redux/slices/loginSlice';
 import {
   createDriverService,
   deleteDriverByIDService,
   getDriversService,
 } from '../services/driversServices';
-import NeoCardLayout from '../components/NeoDriverCardLayout';
-import UI_Container from '../components/UI_Container';
+import NeoDriverCardLayout from './NeoDriverCardLayout';
 import NeoButtonLayout from '../components/NeoButtonLayout';
 import Label from '../components/Label';
 import NeoInputLayout from '../components/NeoInputLayout';
-import Logo from '../components/Logo';
-import DriverTab from '../components/DriverTab';
-import PassengerTab from '../components/PassengerTab';
 
-const DashboardScreen = () => {
+const DriverTab = () => {
   const [drivers, setDrivers] = useState([]);
   const [driverName, setDriverName] = useState('');
   const [licenseType, setLicenseType] = useState('');
@@ -36,9 +30,6 @@ const DashboardScreen = () => {
   const [licenseExpiry, setLicenseExpiry] = useState('');
   const [driverPhone, setDriverPhone] = useState('');
   const [driverCountry, setDriverCountry] = useState('');
-  const [selectedTab, setSelectedTab] = useState(0);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     handleGetDrivers();
@@ -76,60 +67,103 @@ const DashboardScreen = () => {
   };
 
   return (
-    <UI_Container>
-      <Logo />
+    <>
+      <Label text={'Add New Driver!'} />
 
-      <View style={[styles.flexCenter, styles.tab]}>
-        <NeoButtonLayout
-          title={'Drivers'}
-          width={'40%'}
-          onPress={() => setSelectedTab(0)}
-        />
-        <NeoButtonLayout
-          title={'Passengers'}
-          width={'40%'}
-          onPress={() => setSelectedTab(1)}
-        />
-      </View>
+      <Label text={'Name:'} />
 
-      {selectedTab === 0 && <DriverTab />}
-      {selectedTab === 1 && <PassengerTab />}
-
-      <NeoButtonLayout
-        title={'Sign out'}
-        onPress={() => dispatch(setLogOut())}
+      <NeoInputLayout
+        style={styles.input}
+        value={driverName}
+        onChangeText={setDriverName}
       />
-    </UI_Container>
+
+      <Label text={'Gender:'} />
+
+      <DropDownPicker
+        open={openGenderDropDown}
+        value={gender}
+        items={genderOptions}
+        setOpen={setOpenGenderDropDown}
+        setValue={setGender}
+        setItems={setGenderOptions}
+      />
+
+      <Label text={'Age:'} />
+
+      <NeoInputLayout
+        type={'number-pad'}
+        style={styles.input}
+        value={age}
+        onChangeText={setAge}
+      />
+
+      <Label text={'Country:'} />
+
+      <NeoInputLayout
+        style={styles.input}
+        value={driverCountry}
+        onChangeText={setDriverCountry}
+      />
+
+      <Label text={'Phone'} />
+
+      <NeoInputLayout
+        type={'phone-pad'}
+        style={styles.input}
+        value={driverPhone}
+        onChangeText={setDriverPhone}
+      />
+
+      <Label text={'License Expiry'} />
+
+      <NeoInputLayout
+        style={styles.input}
+        value={licenseExpiry}
+        onChangeText={setLicenseExpiry}
+        placeholder={'yyyy-mm-dd'}
+      />
+
+      <Label text={'License Type:'} />
+
+      <DropDownPicker
+        open={openLicenseTypeDropDown}
+        value={licenseType}
+        items={licenseTypeOptions}
+        setOpen={setOpenLicenseTypeDropDown}
+        setValue={setLicenseType}
+        setItems={setLicenseTypeOptions}
+      />
+
+      <NeoButtonLayout title={'Submit'} onPress={handleCreateDriver} />
+
+      <Label text={'Drivers:'} />
+
+      {drivers?.reverse()?.map(({id, name, country, phone}) => {
+        return (
+          <NeoDriverCardLayout
+            key={id}
+            ID={id}
+            name={name}
+            country={country}
+            phone={phone}
+            handleDeleteDriver={handleDeleteDriver}
+          />
+        );
+      })}
+
+      {!drivers?.length && <Label text={'No Drivers Found!'} />}
+    </>
   );
 };
 
-export default DashboardScreen;
+export default DriverTab;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#FFF',
-    paddingHorizontal: 10,
-  },
-  btn: {
-    backgroundColor: '#900C3F',
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  text: {
-    color: 'white',
-    fontSize: 20,
-  },
   input: {
     height: 40,
     marginVertical: 20,
     padding: 10,
     fontSize: 18,
   },
-  flexCenter: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tab: {flexDirection: 'row', justifyContent: 'space-around'},
 });

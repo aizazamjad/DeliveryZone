@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import AppRoute from './src/navigations/navigator';
@@ -9,10 +9,24 @@ export default function App() {
   return (
     <>
       <Provider store={store}>
-        <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
+        <PersistGate
+          loading={
+            <View style={styles.flexCenter}>
+              <ActivityIndicator color={'#900C3F'} />
+            </View>
+          }
+          persistor={persistor}>
           <AppRoute />
         </PersistGate>
       </Provider>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

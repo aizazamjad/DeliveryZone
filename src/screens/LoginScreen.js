@@ -1,15 +1,13 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import {useDispatch} from 'react-redux';
+import NeoButtonLayout from '../components/NeoButtonLayout';
+import NeoInputLayout from '../components/NeoInputLayout';
 import {setLogIn} from '../redux/slices/loginSlice';
 import {loginService} from '../services/loginServices';
+import Logo from '../components/Logo';
+import UI_Container from '../components/UI_Container';
+import Label from '../components/Label';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -37,66 +35,58 @@ const LoginScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={{marginBottom: 20, fontSize: 15}}>Login Here!</Text>
-      <View>
-        <Text style={{fontSize: 15}}>Email:</Text>
-        <TextInput style={styles.input} value={email} onChangeText={setEmail} />
-      </View>
-      <View>
-        <Text style={{fontSize: 15}}>Password:</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-      <TouchableOpacity
+    <UI_Container>
+      <Logo />
+
+      <Label text={'Login Here!'} />
+
+      <Label text={'Email:'} />
+
+      <NeoInputLayout
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <Label text={'Password:'} />
+
+      <NeoInputLayout
+        secureTextEntry={true}
+        style={styles.input}
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <NeoButtonLayout
+        title={'Sign In'}
         disabled={!email || !password}
         onPress={handleLogin}
-        style={[
-          styles.btn,
-          styles.flexCenter,
-          (!email || !password) && {backgroundColor: '#DAF7A6'},
-        ]}>
-        <Text style={styles.text}>Sign In</Text>
-      </TouchableOpacity>
-      <Text style={{marginVertical: 20, fontSize: 15}}>
-        Or Create a New Account!
-      </Text>
-      <TouchableOpacity
-        onPress={handleCreateAccount}
-        style={[styles.btn, styles.flexCenter]}>
-        <Text style={styles.text}>Create Account</Text>
-      </TouchableOpacity>
-    </View>
+      />
+
+      <Label text={'Or Create a New Account!'} />
+
+      <NeoButtonLayout title={'Create Account'} onPress={handleCreateAccount} />
+    </UI_Container>
   );
 };
 
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#FFF',
-    paddingHorizontal: 10,
-  },
   btn: {
     backgroundColor: '#900C3F',
     paddingVertical: 10,
     borderRadius: 10,
   },
   text: {
-    color: 'white',
+    color: '#900C3F',
     fontSize: 20,
   },
   input: {
     height: 40,
     marginVertical: 20,
-    borderWidth: 1,
-    borderColor: '#900C3F',
     padding: 10,
+    fontSize: 18,
   },
   flexCenter: {
     justifyContent: 'center',

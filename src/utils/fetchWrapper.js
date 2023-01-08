@@ -58,7 +58,17 @@ export const handleResponse = async response => {
     throw new Error('Unauthorized');
   }
 
-  const res = await response.json();
+  const isJson = response.headers
+    .get('content-type')
+    ?.includes('application/json');
+  const res = isJson ? await response.json() : null;
+
+  // check for error response
+  if (!response.ok) {
+    // get error message from body or default to response status
+    const error = (res && res.message) || response.status;
+    return Promise.reject(error);
+  }
 
   return res;
 };
